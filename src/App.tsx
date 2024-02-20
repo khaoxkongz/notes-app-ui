@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 type Note = {
@@ -8,33 +8,28 @@ type Note = {
 };
 
 const App = () => {
-	const [notes, setNotes] = useState<Note[]>([
-		{
-			id: 1,
-			title: "note title 1",
-			content: "content 1",
-		},
-		{
-			id: 2,
-			title: "note title 2",
-			content: "content 2",
-		},
-		{
-			id: 3,
-			title: "note title 3",
-			content: "content 3",
-		},
-		{
-			id: 4,
-			title: "note title 4",
-			content: "content 4",
-		},
-	]);
+	const [notes, setNotes] = useState<Note[]>([]);
 
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 
 	const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+
+	useEffect(() => {
+		const fetchNotes = async () => {
+			try {
+				const response = await fetch("http://localhost:8888/api/notes");
+
+				const notes: Note[] = await response.json();
+
+				setNotes(notes);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+
+		fetchNotes();
+	}, []);
 
 	const handleNoteClick = (note: Note) => {
 		setSelectedNote(note);
@@ -99,9 +94,7 @@ const App = () => {
 				action=""
 				className="note-form"
 				onSubmit={(event) =>
-					selectedNote
-						? handleUpdateNote(event)
-						: handleAddNote(event)
+					selectedNote ? handleUpdateNote(event) : handleAddNote(event)
 				}
 			>
 				<input
@@ -129,16 +122,9 @@ const App = () => {
 			</form>
 			<div className="notes-grid">
 				{notes.map((note) => (
-					<div
-						className="note-item"
-						onClick={() => handleNoteClick(note)}
-					>
+					<div className="note-item" onClick={() => handleNoteClick(note)}>
 						<div className="notes-header">
-							<button
-								onClick={(event) => deleteNote(event, note.id)}
-							>
-								x
-							</button>
+							<button onClick={(event) => deleteNote(event, note.id)}>x</button>
 						</div>
 						<h2>{note.title}</h2>
 						<p>{note.content}</p>
