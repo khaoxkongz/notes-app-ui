@@ -34,7 +34,7 @@ const App = () => {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 
-	const handleSubmit = (event: React.FormEvent) => {
+	const handleAddNote = (event: React.FormEvent) => {
 		event.preventDefault();
 
 		const newNote: Note = {
@@ -53,7 +53,7 @@ const App = () => {
 			<form
 				action=""
 				className="note-form"
-				onSubmit={(event) => handleSubmit(event)}
+				onSubmit={(event) => handleAddNote(event)}
 			>
 				<input
 					value={title}
